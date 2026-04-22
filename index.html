@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equipe Aquarela — Ferramenta de Rastreio e Consulta</title>
+  <link rel="stylesheet" href="css/estilo.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script type="module" src="js/app.js" defer></script>
+</head>
+<body>
+  <header class="cabecalho">
+    <div class="logo">
+      <span class="logo-circulo"></span>
+      <div>
+        <h1>Equipe Aquarela</h1>
+        <p class="subtitulo">Ferramenta de Rastreio e Consulta · UBS</p>
+      </div>
+    </div>
+    <p class="aviso">Nenhum dado é salvo. Ao recarregar, tudo é apagado.</p>
+  </header>
+
+  <main class="container">
+    <!-- 1. Identificação -->
+    <section class="cartao" data-secao="identificacao">
+      <h2>1. Identificação</h2>
+      <div class="grade">
+        <label>Nome<input type="text" id="nome" placeholder="Nome do paciente" /></label>
+        <label>Data de nascimento<input type="date" id="dataNascimento" /></label>
+        <label>Idade<input type="number" id="idade" readonly /></label>
+        <label>Sexo
+          <select id="sexo">
+            <option value="">—</option>
+            <option value="F">Feminino</option>
+            <option value="M">Masculino</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- 2. Antecedentes -->
+    <section class="cartao" data-secao="antecedentes">
+      <h2>2. Antecedentes e fatores de risco</h2>
+      <div class="chips" id="antecedentes">
+        <label class="chip"><input type="checkbox" name="antec" value="has" /> Hipertensão</label>
+        <label class="chip"><input type="checkbox" name="antec" value="dm" /> Diabetes</label>
+        <label class="chip"><input type="checkbox" name="antec" value="dislipidemia" /> Dislipidemia</label>
+        <label class="chip"><input type="checkbox" name="antec" value="tabagismo" /> Tabagismo ativo</label>
+        <label class="chip"><input type="checkbox" name="antec" value="ex_tabagismo" /> Ex-tabagista</label>
+        <label class="chip"><input type="checkbox" name="antec" value="obesidade" /> Obesidade</label>
+        <label class="chip"><input type="checkbox" name="antec" value="hist_fam_cv" /> Hist. familiar CV precoce</label>
+        <label class="chip"><input type="checkbox" name="antec" value="drc" /> DRC</label>
+        <label class="chip"><input type="checkbox" name="antec" value="gestante" /> Gestante</label>
+        <label class="chip"><input type="checkbox" name="antec" value="anti_hta" /> Uso anti-HTA</label>
+        <label class="chip"><input type="checkbox" name="antec" value="estatina" /> Uso estatina</label>
+        <label class="chip"><input type="checkbox" name="antec" value="sedentario" /> Sedentário</label>
+      </div>
+      <label class="bloco">Queixa / outras informações (opcional)
+        <textarea id="queixa" rows="2" placeholder="Ex.: refere tontura ocasional, nega dor torácica..."></textarea>
+      </label>
+    </section>
+
+    <!-- 3. Rastreios -->
+    <section class="cartao" data-secao="rastreios">
+      <h2>3. Rastreios recomendados</h2>
+      <p class="dica">Gerados a partir da idade, sexo e antecedentes. Marque o status de cada um.</p>
+      <div id="listaRastreios" class="lista-rastreios">
+        <p class="vazio">Preencha idade e sexo para ver os rastreios.</p>
+      </div>
+    </section>
+
+    <!-- 4. Sinais e medidas -->
+    <section class="cartao" data-secao="sinais">
+      <h2>4. Sinais vitais e antropometria</h2>
+      <div class="grade">
+        <label>PA sistólica (mmHg)<input type="number" id="pas" min="60" max="260" /></label>
+        <label>PA diastólica (mmHg)<input type="number" id="pad" min="30" max="160" /></label>
+        <label>Freq. cardíaca<input type="number" id="fc" min="30" max="220" /></label>
+        <label>Peso (kg)<input type="number" id="peso" step="0.1" /></label>
+        <label>Altura (m)<input type="number" id="altura" step="0.01" placeholder="1.70" /></label>
+        <label>Circ. abdominal (cm)<input type="number" id="ca" step="0.1" /></label>
+      </div>
+      <div class="resultados">
+        <div class="pill" id="imcPill">IMC: —</div>
+        <div class="pill" id="paPill">PA: —</div>
+      </div>
+    </section>
+
+    <!-- 5. Exames laboratoriais -->
+    <section class="cartao" data-secao="exames">
+      <h2>5. Exames laboratoriais</h2>
+      <div class="grade">
+        <label>Colesterol total (mg/dL)<input type="number" id="ct" /></label>
+        <label>HDL (mg/dL)<input type="number" id="hdl" /></label>
+        <label>LDL (mg/dL)<input type="number" id="ldl" /></label>
+        <label>Triglicérides (mg/dL)<input type="number" id="tg" /></label>
+        <label>Glicemia jejum (mg/dL)<input type="number" id="glicemia" /></label>
+        <label>HbA1c (%)<input type="number" id="hba1c" step="0.1" /></label>
+        <label>Creatinina (mg/dL)<input type="number" id="creatinina" step="0.01" /></label>
+        <label>Albuminúria (mg/g)<input type="number" id="uacr" step="0.1" placeholder="relação alb/cr" /></label>
+      </div>
+      <div class="resultados">
+        <div class="pill" id="tfgPill">TFG: —</div>
+        <div class="pill" id="metaLdlPill">Meta LDL: —</div>
+        <div class="pill" id="controleDmPill">Controle DM: —</div>
+      </div>
+    </section>
+
+    <!-- 6. Pé diabético (só se DM) -->
+    <section class="cartao oculto" data-secao="pe" id="secaoPe">
+      <h2>6. Exame do pé diabético</h2>
+      <div class="grade grade-pe">
+        <div class="opcoes">
+          <span class="rotulo">Inspeção</span>
+          <label><input type="radio" name="pe_inspecao" value="normal" /> Normal</label>
+          <label><input type="radio" name="pe_inspecao" value="alterada" /> Alterada (lesão/deformidade)</label>
+        </div>
+        <div class="opcoes">
+          <span class="rotulo">Sensibilidade tátil (monofilamento 10g)</span>
+          <label><input type="radio" name="pe_tatil" value="preservada" /> Preservada</label>
+          <label><input type="radio" name="pe_tatil" value="alterada" /> Alterada</label>
+        </div>
+        <div class="opcoes">
+          <span class="rotulo">Sensibilidade vibratória (diapasão 128Hz)</span>
+          <label><input type="radio" name="pe_vibratoria" value="preservada" /> Preservada</label>
+          <label><input type="radio" name="pe_vibratoria" value="alterada" /> Alterada</label>
+        </div>
+        <div class="opcoes">
+          <span class="rotulo">Pulso tibial posterior</span>
+          <label><input type="radio" name="pe_tibial" value="presente" /> Presente</label>
+          <label><input type="radio" name="pe_tibial" value="ausente" /> Ausente</label>
+        </div>
+        <div class="opcoes">
+          <span class="rotulo">Pulso pedioso</span>
+          <label><input type="radio" name="pe_pedioso" value="presente" /> Presente</label>
+          <label><input type="radio" name="pe_pedioso" value="ausente" /> Ausente</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Exame físico geral (clicável) -->
+    <section class="cartao" data-secao="exameFisico">
+      <h2>7. Exame físico geral</h2>
+      <div class="grade grade-pe">
+        <div class="opcoes">
+          <span class="rotulo">Ausculta cardíaca</span>
+          <label><input type="radio" name="ef_acv" value="normal" /> RCR 2T BNF s/ sopros</label>
+          <label><input type="radio" name="ef_acv" value="sopro" /> Sopro audível</label>
+          <label><input type="radio" name="ef_acv" value="arritmico" /> Ritmo irregular</label>
+        </div>
+        <div class="opcoes">
+          <span class="rotulo">Ausculta pulmonar</span>
+          <label><input type="radio" name="ef_ap" value="normal" /> MV+ s/ RA</label>
+          <label><input type="radio" name="ef_ap" value="alterado" /> Ruídos adventícios</label>
+        </div>
+        <div class="opcoes">
+          <span class="rotulo">Abdome</span>
+          <label><input type="radio" name="ef_abd" value="normal" /> Flácido, indolor, RHA+</label>
+          <label><input type="radio" name="ef_abd" value="alterado" /> Alterado</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Risco CV -->
+    <section class="cartao" data-secao="risco">
+      <h2>8. Risco cardiovascular</h2>
+      <p class="dica">Calculado automaticamente quando houver idade, sexo, PAS, CT, HDL e status de DM/tabagismo/tratamento.</p>
+      <div class="caixas-risco">
+        <div class="caixa-risco" id="caixaPrevent">
+          <h3>PREVENT (AHA 2023)</h3>
+          <div class="risco-valor" id="preventValor">—</div>
+          <div class="risco-categoria" id="preventCategoria">aguardando dados</div>
+          <small>Risco de doença CV total em 10 anos. Válido 30–79 anos.</small>
+        </div>
+        <div class="caixa-risco" id="caixaErg">
+          <h3>ERG-SBC (Global 2020)</h3>
+          <div class="risco-valor" id="ergValor">—</div>
+          <div class="risco-categoria" id="ergCategoria">aguardando dados</div>
+          <small>Escore de Risco Global da SBC (D'Agostino).</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. SOAP gerado -->
+    <section class="cartao destaque" data-secao="soap">
+      <h2>9. SOAP gerado</h2>
+      <p class="dica">Gerado automaticamente. Você pode editar antes de copiar.</p>
+      <textarea id="soapTexto" rows="20" spellcheck="true"></textarea>
+      <div class="acoes">
+        <button id="btnCopiarSoap" class="botao primario">📋 Copiar SOAP</button>
+        <button id="btnRegerarSoap" class="botao secundario">🔄 Regerar a partir dos campos</button>
+        <span id="avisoCopiado" class="aviso-copiado"></span>
+      </div>
+    </section>
+
+    <!-- 10. PDF educativo -->
+    <section class="cartao destaque" data-secao="pdf">
+      <h2>10. Material educativo personalizado</h2>
+      <p class="dica">Gera PDF com apresentação da Equipe Aquarela e blocos educativos só das condições do paciente.</p>
+      <div class="acoes">
+        <button id="btnGerarPdf" class="botao primario">📄 Gerar PDF da Equipe Aquarela</button>
+      </div>
+    </section>
+
+    <footer class="rodape">
+      <p>Equipe Aquarela · UBS · Diretrizes MS / SBD 2024 / SBC 2020 / INCA · PREVENT AHA 2023</p>
+      <p class="micro">Ferramenta de apoio clínico. Não substitui avaliação profissional.</p>
+    </footer>
+  </main>
+</body>
+</html>
