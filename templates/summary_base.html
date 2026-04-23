@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }}</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm 18mm;
+    @bottom-center {
+      content: "Gerado por ECG CLAUDE · " string(doctitle);
+      font-size: 8pt;
+      color: #999;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 10.5pt;
+    line-height: 1.65;
+    color: #1a1a1a;
+    background: #fff;
+  }
+
+  /* ── Cabeçalho ── */
+  .doc-header {
+    border-bottom: 3px solid #1a3a5c;
+    padding-bottom: 14px;
+    margin-bottom: 28px;
+    page-break-after: avoid;
+  }
+  .doc-header .badge {
+    display: inline-block;
+    background: #1a3a5c;
+    color: #fff;
+    font-size: 7.5pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .doc-header h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #1a3a5c;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .doc-header .meta {
+    font-size: 8.5pt;
+    color: #666;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ── Conceitos-chave (barra lateral simulada como caixa no topo) ── */
+  .key-concepts {
+    background: #f0f4f9;
+    border-left: 4px solid #1a3a5c;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 28px;
+    page-break-inside: avoid;
+  }
+  .key-concepts h3 {
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #1a3a5c;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin-bottom: 8px;
+  }
+  .key-concepts ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .key-concepts ul li {
+    background: #1a3a5c;
+    color: #fff;
+    font-size: 8pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* ── Seções ── */
+  .section { margin-bottom: 30px; }
+
+  .section-heading-1 {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #1a3a5c;
+    border-bottom: 1.5px solid #c8d8e8;
+    padding-bottom: 5px;
+    margin-bottom: 14px;
+    page-break-after: avoid;
+  }
+  .section-heading-2 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2a4a6c;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+  .section-heading-3 {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #3a5a7c;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+
+  /* ── Texto ── */
+  .text-block { margin-bottom: 12px; text-align: justify; }
+  .text-block p + p { text-indent: 1.2em; }
+
+  /* ── Tabelas ── */
+  .table-wrap { margin: 16px 0; page-break-inside: avoid; overflow-x: auto; }
+  .table-caption {
+    font-size: 8.5pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #555;
+    margin-bottom: 5px;
+    font-style: italic;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  thead tr { background: #1a3a5c; color: #fff; }
+  thead th {
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 8.5pt;
+    letter-spacing: 0.3px;
+  }
+  tbody tr:nth-child(even) { background: #f5f8fc; }
+  tbody tr:hover { background: #e8f0f8; }
+  tbody td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #dde6ef;
+    vertical-align: top;
+  }
+
+  /* ── Mermaid ── */
+  .mermaid-wrap { margin: 16px 0; page-break-inside: avoid; }
+  .mermaid-caption {
+    font-size: 8.5pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #555;
+    margin-top: 5px;
+    font-style: italic;
+    text-align: center;
+  }
+  .mermaid {
+    background: #f8fafc;
+    border: 1px solid #dde6ef;
+    border-radius: 4px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  /* ── Imagens ── */
+  .image-wrap {
+    margin: 16px 0;
+    page-break-inside: avoid;
+    text-align: center;
+  }
+  .image-wrap img {
+    max-width: 100%;
+    max-height: 320px;
+    border: 1px solid #dde6ef;
+    border-radius: 3px;
+  }
+  .image-caption {
+    font-size: 8.5pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #555;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  /* ── Highlight boxes ── */
+  .highlight-box {
+    margin: 14px 0;
+    padding: 11px 14px;
+    border-radius: 4px;
+    border-left: 4px solid;
+    page-break-inside: avoid;
+    font-size: 10pt;
+  }
+  .highlight-box .box-label {
+    font-size: 7.5pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .highlight-box .box-content { line-height: 1.6; }
+
+  /* Cores por tipo */
+  .box-definicao, .box-definição {
+    background: #eff6ff;
+    border-color: #2563eb;
+  }
+  .box-definicao .box-label, .box-definição .box-label { color: #1d4ed8; }
+
+  .box-teorema {
+    background: #f5f3ff;
+    border-color: #7c3aed;
+  }
+  .box-teorema .box-label { color: #6d28d9; }
+
+  .box-fórmula, .box-formula {
+    background: #f0fdf4;
+    border-color: #16a34a;
+  }
+  .box-fórmula .box-label, .box-formula .box-label { color: #15803d; }
+
+  .box-resultado {
+    background: #fff7ed;
+    border-color: #ea580c;
+  }
+  .box-resultado .box-label { color: #c2410c; }
+
+  .box-importante, .box-nota {
+    background: #fefce8;
+    border-color: #ca8a04;
+  }
+  .box-importante .box-label, .box-nota .box-label { color: #a16207; }
+
+  /* ── Rodapé ── */
+  .doc-footer {
+    margin-top: 36px;
+    padding-top: 10px;
+    border-top: 1px solid #dde6ef;
+    font-size: 8pt;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #999;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="badge">ECG CLAUDE · Resumo Estruturado</div>
+  <h1>{{ title }}</h1>
+  <div class="meta">
+    Gerado em {{ generated_at }}
+    {% if source_type == "pdf" %} · Fonte: {{ source_name }}
+    {% elif source_type == "url" %} · Fonte: <a href="{{ source_name }}">{{ source_name }}</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if key_concepts %}
+<div class="key-concepts">
+  <h3>Conceitos-Chave</h3>
+  <ul>
+    {% for concept in key_concepts %}
+    <li>{{ concept }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% for section in sections %}
+<div class="section">
+
+  {% if section.level == 1 %}
+  <h2 class="section-heading-1">{{ section.heading }}</h2>
+  {% elif section.level == 2 %}
+  <h3 class="section-heading-2">{{ section.heading }}</h3>
+  {% else %}
+  <h4 class="section-heading-3">{{ section.heading }}</h4>
+  {% endif %}
+
+  {% for block in section.content_blocks %}
+
+    {% if block.type == "text" %}
+    <div class="text-block">
+      {% for para in block.content.split('\n\n') %}
+      <p>{{ para }}</p>
+      {% endfor %}
+    </div>
+
+    {% elif block.type == "table" %}
+    <div class="table-wrap">
+      {% if block.caption %}<div class="table-caption">{{ block.caption }}</div>{% endif %}
+      <table>
+        {% if block.headers %}
+        <thead>
+          <tr>{% for h in block.headers %}<th>{{ h }}</th>{% endfor %}</tr>
+        </thead>
+        {% endif %}
+        <tbody>
+          {% for row in block.rows %}
+          <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif block.type == "mermaid" %}
+    <div class="mermaid-wrap">
+      <div class="mermaid">{{ block.code }}</div>
+      {% if block.caption %}<div class="mermaid-caption">{{ block.caption }}</div>{% endif %}
+    </div>
+
+    {% elif block.type == "image_ref" %}
+    {% set img = images[block.image_index] if block.image_index is defined and images %}
+    {% if img %}
+    <div class="image-wrap">
+      <img src="{{ img }}" alt="{{ block.caption }}">
+      {% if block.caption %}<div class="image-caption">{{ block.caption }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {% elif block.type == "highlight_box" %}
+    <div class="highlight-box box-{{ block.label | lower | replace('ã','a') | replace('é','e') | replace('ó','o') | replace('í','i') | replace('ú','u') }}">
+      <div class="box-label">{{ block.label }}</div>
+      <div class="box-content">{{ block.content }}</div>
+    </div>
+
+    {% endif %}
+  {% endfor %}
+
+</div>
+{% endfor %}
+
+<div class="doc-footer">
+  Resumo gerado por ECG CLAUDE · Conteúdo exclusivamente do documento original · {{ generated_at }}
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+</script>
+
+</body>
+</html>
