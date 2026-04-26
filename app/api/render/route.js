@@ -29,7 +29,11 @@ export async function POST(request) {
   const garage   = (programa?.vagas || 0) > 0 ? `${programa.vagas}-car covered garage` : 'no garage'
   const angleDesc = ANGLE_DESCRIPTIONS[angle] || ANGLE_DESCRIPTIONS.perspective
 
-  const prompt = `Photorealistic architectural render of a ${floors} Brazilian residential house in ${cidade || 'Brazil'}${estado ? ', ' + estado : ''}. Ceramic tile hip roof, terracotta red color. Painted plaster exterior walls, off-white. ${padrao}. ${garage}. Lush tropical garden with palm trees, green lawn. ${angleDesc} Professional architecture photography style, sharp details, natural lighting. No people. No text overlays. No watermarks.`
+  const terrainContext = projectData?.terrain_analysis
+    ? `The house is situated on this specific terrain: ${projectData.terrain_analysis}. Preserve the surrounding context, vegetation, neighborhood style, and topography from the terrain photo.`
+    : 'Lush tropical garden with palm trees and green lawn.'
+
+  const prompt = `Photorealistic architectural render of a ${floors} Brazilian residential house in ${cidade || 'Brazil'}${estado ? ', ' + estado : ''}. Ceramic tile hip roof, terracotta red color. Painted plaster exterior walls, off-white. ${padrao}. ${garage}. ${terrainContext} ${angleDesc} Professional architecture photography style, sharp details, natural lighting. No people. No text overlays. No watermarks.`
 
   try {
     const response = await ai.models.generateImages({
