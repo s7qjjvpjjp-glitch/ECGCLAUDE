@@ -5,6 +5,7 @@ import { Development } from './pages/Development';
 import { Nutrition } from './pages/Nutrition';
 import { Vaccines } from './pages/Vaccines';
 import { Materials } from './pages/Materials';
+import { Consulta } from './pages/Consulta';
 
 export function App() {
   return (
@@ -16,6 +17,7 @@ export function App() {
           <Route path="/nutricao" element={<Nutrition />} />
           <Route path="/vacinas" element={<Vaccines />} />
           <Route path="/materiais" element={<Materials />} />
+          <Route path="/consulta" element={<Consulta />} />
         </Routes>
       </AppShell>
     </BrowserRouter>
